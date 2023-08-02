@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  schedule:
+    - cron: "1 1 * * 1"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-npm-cache
+          restore-keys: |
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies
+        run: npm install
+      - name: Download build from upstream
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run download
+          cat setenv.txt >> $GITHUB_ENV
+      - name: Generate hashsums
+        run: sha256sum "freetube.pacman.tar.xz" > "freetube.pacman.tar.xz.sha256sum"
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.release_tag }}
+          body: https://github.com/FreeTubeApp/FreeTube/actions/runs/${{ env.workflow_id }}
+          commit: main
+          makeLatest: true
+          artifacts: "./freetube.pacman.tar.xz,./*.sha256sum"
