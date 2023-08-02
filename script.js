@@ -31,7 +31,7 @@ const f = async () => {
       headSha = artifact.workflow_run.head_sha
       workflowId = artifact.workflow_run.id
       build = name.split('-')[2].split('_')[0]
-      tag = name.split('-')[1]
+      tag = name.split('_')[1].split('-')[0]
       releaseTag = `${tag}.build${build}.${headSha.substring(0, 7)}`
       await writeFile('setenv.txt', `release_tag=${releaseTag}\nworkflow_id=${workflowId}\n`)
       break
