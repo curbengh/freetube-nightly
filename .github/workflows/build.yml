@@ -24,7 +24,9 @@ jobs:
       - name: Download build from upstream
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run download
+        run: |
+          npm run download
+          cat setenv.txt >> $GITHUB_ENV
       - name: Generate hashsums
         run: sha256sum "freetube.pacman.tar.xz" > "freetube.pacman.tar.xz.sha256sum"
       - uses: ncipollo/release-action@v1

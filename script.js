@@ -23,7 +23,6 @@ const f = async () => {
   let releaseTag = ''
   let workflowId = ''
   const res = await requestWithAuth('GET /repos/{owner}/{repo}/actions/artifacts')
-  await writeFile('res.json', JSON.stringify(res, null, 2))
 
   for (const artifact of res.data.artifacts) {
     if (artifact.name.endsWith('.pacman')) {
@@ -34,8 +33,7 @@ const f = async () => {
       build = name.split('-')[2].split('_')[0]
       tag = name.split('-')[1]
       releaseTag = `${tag}.build${build}.${headSha.substring(0, 7)}`
-      env.GITHUB_ENV += `release_tag=${releaseTag}\n`
-      env.GITHUB_ENV += `workflow_id=${workflowId}\n`
+      await writeFile('setenv.txt', `release_tag=${releaseTag}\nworkflow_id=${workflowId}\n`)
       break
     }
   }
