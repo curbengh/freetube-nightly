@@ -6,3 +6,5 @@ This repository enables you to:
 2. Download the [latest build](https://github.com/curbengh/freetube-nightly/releases/latest/download/freetube.pacman.tar.xz) without knowing the build number.
 
 The [builds](https://github.com/curbengh/freetube-nightly/releases) are licensed by [PrestonN](https://github.com/FreeTubeApp) under [AGPLv3](https://github.com/curbengh/freetube-nightly).
+
+[AUR](https://aur.archlinux.org/packages/freetube-nightly) source is available at the `master` branch.
