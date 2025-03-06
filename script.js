@@ -16,7 +16,7 @@ const requestWithAuth = request.defaults({
 
 const f = async () => {
   let artifact_id = ''
-  let name = 'freetube_0.18.0-nightly-3196_amd64.pacman.zip'
+  let name = 'freetube-0.23.2-nightly-5718-amd64.pacman'
   let headSha = ''
   let build = ''
   let tag = ''
@@ -30,8 +30,10 @@ const f = async () => {
       name = artifact.name
       headSha = artifact.workflow_run.head_sha
       workflowId = artifact.workflow_run.id
-      build = name.split('-')[2].split('_')[0]
-      tag = name.split('_')[1].split('-')[0]
+      // 5718
+      build = name.split('-')[3]
+      // 0.23.2
+      tag = name.split('-')[1]
       releaseTag = `${tag}.build${build}.${headSha.substring(0, 7)}`
       await writeFile('setenv.txt', `release_tag=${releaseTag}\nworkflow_id=${workflowId}\n`)
       break
