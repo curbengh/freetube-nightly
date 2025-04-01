@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@octokit/request": "^8.1.1",
-    "got": "^11.8.6",
     "unzipper": "^0.10.14"
-  }
+  },
+  "type": "module"
 }

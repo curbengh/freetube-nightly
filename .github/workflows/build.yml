@@ -1,8 +1,6 @@
 name: Build
 
 on:
-  schedule:
-    - cron: "1 1 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -29,10 +27,9 @@ jobs:
           cat setenv.txt >> $GITHUB_ENV
       - name: Generate hashsums
         run: sha256sum "freetube.pacman.tar.xz" > "freetube.pacman.tar.xz.sha256sum"
-      - uses: ncipollo/release-action@v1
+      - name: "Upload Artifact"
+        uses: actions/upload-artifact@v4
         with:
-          tag: ${{ env.release_tag }}
-          body: https://github.com/FreeTubeApp/FreeTube/actions/runs/${{ env.workflow_id }}
-          commit: main
-          makeLatest: true
-          artifacts: "./freetube.pacman.tar.xz,./*.sha256sum"
+          name: artifacts
+          path: ./freetube.pacman.tar.xz*
+          retention-days: 1
