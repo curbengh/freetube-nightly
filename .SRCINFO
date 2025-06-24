@@ -1,6 +1,6 @@
 pkgbase = freetube-nightly
 	pkgdesc = A private YouTube client (nightly build)
-	pkgver = 0.23.2_nightly_5718
+	pkgver = 0.23.5_nightly_6142
 	pkgrel = 1
 	url = https://github.com/FreeTubeApp/FreeTube
 	install = freetube-nightly.install
