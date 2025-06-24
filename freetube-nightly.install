@@ -7,9 +7,9 @@ if type update-alternatives 2>/dev/null >&1; then
     if [ -L '/usr/bin/freetube' -a -e '/usr/bin/freetube' -a "`readlink '/usr/bin/freetube'`" != '/etc/alternatives/freetube' ]; then
       rm -f '/usr/bin/freetube'
     fi
-    update-alternatives --install '/usr/bin/freetube' 'freetube' '/opt/FreeTube/freetube' 100
+    update-alternatives --install '/usr/bin/freetube' 'freetube' '/opt/FreeTube/FreeTube' 100
 else
-    ln -sf '/opt/FreeTube/freetube' '/usr/bin/freetube'
+    ln -sf '/opt/FreeTube/FreeTube' '/usr/bin/freetube'
 fi
 
 # SUID chrome-sandbox for Electron 5+
