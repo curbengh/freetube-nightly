@@ -3,7 +3,7 @@
 _pkgname=freetube
 pkgname=${_pkgname}-nightly
 pkgver=0.23.13_nightly_6940
-pkgrel=2
+pkgrel=3
 pkgdesc="A private YouTube client (nightly build)"
 arch=('x86_64')
 url="https://github.com/FreeTubeApp/FreeTube"
