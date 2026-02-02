@@ -2,14 +2,18 @@ post_install() {
     :
 #!/bin/bash
 
+FREETUBE_BIN="/opt/FreeTube/freetube"
+if [ -f "/opt/FreeTube/FreeTube" ]; then
+    FREETUBE_BIN="/opt/FreeTube/FreeTube"
+
 if type update-alternatives 2>/dev/null >&1; then
     # Remove previous link if it doesn't use update-alternatives
     if [ -L '/usr/bin/freetube' -a -e '/usr/bin/freetube' -a "`readlink '/usr/bin/freetube'`" != '/etc/alternatives/freetube' ]; then
       rm -f '/usr/bin/freetube'
     fi
-    update-alternatives --install '/usr/bin/freetube' 'freetube' '/opt/FreeTube/FreeTube' 100
+    update-alternatives --install '/usr/bin/freetube' 'freetube' "$FREETUBE_BIN" 100
 else
-    ln -sf '/opt/FreeTube/FreeTube' '/usr/bin/freetube'
+    ln -sf "$FREETUBE_BIN" '/usr/bin/freetube'
 fi
 
 # SUID chrome-sandbox for Electron 5+
