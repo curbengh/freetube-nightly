@@ -15,25 +15,19 @@ const requestWithAuth = request.defaults({
 })
 
 let artifactId = ''
-let name = 'freetube-0.23.2-nightly-5718-amd64.pacman'
-let headSha = ''
-let build = ''
-let tag = ''
-let releaseTag = ''
-let workflowId = ''
 const res = await requestWithAuth('GET /repos/{owner}/{repo}/actions/artifacts')
 
 for (const artifact of res.data.artifacts) {
   if (artifact.name.endsWith('.pacman')) {
     artifactId = artifact.id
-    name = artifact.name
-    headSha = artifact.workflow_run.head_sha
-    workflowId = artifact.workflow_run.id
+    const name = artifact.name
+    const headSha = artifact.workflow_run.head_sha
+    const workflowId = artifact.workflow_run.id
     // 5718
-    build = name.split('-')[3]
+    const build = name.split('-')[3]
     // 0.23.2
-    tag = name.split('-')[1]
-    releaseTag = `${tag}.build${build}.${headSha.substring(0, 7)}`
+    const tag = name.split('-')[1]
+    const releaseTag = `${tag}.build${build}.${headSha.substring(0, 7)}`
     await writeFile('setenv.txt', `release_tag=${releaseTag}\nworkflow_id=${workflowId}\n`)
     break
   }
