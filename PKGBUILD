@@ -10,6 +10,7 @@ url="https://github.com/FreeTubeApp/FreeTube"
 license=('AGPL-3.0-or-later')
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")
+# https://github.com/electron-userland/electron-builder
 depends=(
   'c-ares'
   'ffmpeg'
