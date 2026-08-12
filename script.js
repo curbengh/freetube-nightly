@@ -23,11 +23,12 @@ for (const artifact of res.data.artifacts) {
     const name = artifact.name
     const headSha = artifact.workflow_run.head_sha
     const workflowId = artifact.workflow_run.id
+    // build number no longer available after 7632
     // 5718
-    const build = name.split('-')[3]
+    // const build = name.split('-')[3]
     // 0.23.2
     const tag = name.split('-')[1]
-    const releaseTag = `${tag}.build${build}.${headSha.substring(0, 7)}`
+    const releaseTag = `${tag}.artifact${artifactId}.${headSha.substring(0, 7)}`
     await writeFile('setenv.txt', `release_tag=${releaseTag}\nworkflow_id=${workflowId}\n`)
     break
   }
