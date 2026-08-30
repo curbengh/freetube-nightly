@@ -12,20 +12,11 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
-      - name: Cache NPM dependencies
-        uses: actions/cache@v5
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-npm-cache
-          restore-keys: |
-            ${{ runner.OS }}-npm-cache
-      - name: Install Dependencies
-        run: npm install
       - name: Download build from upstream
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm run download
+          python script.py
           cat setenv.txt >> $GITHUB_ENV
       - name: Generate hashsums
         run: sha256sum "freetube.pacman.tar.xz" > "freetube.pacman.tar.xz.sha256sum"

@@ -1,0 +1,69 @@
+from json import loads
+from os import environ
+from platform import python_version
+from urllib.request import (
+    HTTPError,
+    HTTPRedirectHandler,
+    build_opener,
+)
+from zipfile import ZipFile
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        pass
+
+
+opener = build_opener(NoRedirect())
+opener.addheaders = [
+    (
+        "User-Agent",
+        f"Python-urllib/{python_version()} {environ.get('GITHUB_REPOSITORY', '')}",
+    ),
+    ("Accept", "application/vnd.github+json"),
+    (
+        "Authorization",
+        f"Bearer {environ.get('github_token', '')}",
+    ),
+    ("X-GitHub-Api-Version", "2026-03-10"),
+]
+artifacts = []
+with opener.open(
+    "https://api.github.com/repos/FreeTubeApp/FreeTube/actions/artifacts"
+) as res_artifacts:
+    artifacts = loads(res_artifacts.read().decode("utf-8"))["artifacts"]
+
+artifact_id = ""
+for artifact in artifacts:
+    if artifact["name"].endswith(".pacman"):
+        artifact_id = artifact["id"]
+        name = artifact["name"]
+        head_sha = artifact["workflow_run"]["head_sha"]
+        workflow_id = artifact["workflow_run"]["id"]
+        # 5718
+        build = name.split("-")[3]
+        # 0.23.2
+        tag = name.split("-")[1]
+        release_tag = f"{tag}.build{build}.{head_sha[:7]}"
+        with open("setenv.txt", "w") as setenv:
+            setenv.write(f"release_tag={release_tag}\nworkflow_id={workflow_id}\n")
+        break
+
+
+zip_url = ""
+try:
+    res_zip = opener.open(
+        f"https://api.github.com/repos/FreeTubeApp/FreeTube/actions/artifacts/{artifact_id}/zip"
+    )
+except HTTPError as e:
+    if e.status == 302:
+        zip_url = e.headers.get("Location", "")
+
+opener.addheaders = [("Accept", "application/octet-stream")]
+with opener.open(zip_url) as zip_res, open("artifact.zip", "wb") as f:
+    f.write(zip_res.read())
+
+with ZipFile("artifact.zip") as myzip:
+    print(myzip.namelist())
+    with open("freetube.pacman.tar.xz", mode="wb") as f:
+        f.write(myzip.read(myzip.namelist()[0]))
