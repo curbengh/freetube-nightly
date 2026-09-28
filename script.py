@@ -28,10 +28,13 @@ opener.addheaders = [
     ("X-GitHub-Api-Version", "2026-03-10"),
 ]
 artifacts = []
-with opener.open(
-    "https://api.github.com/repos/FreeTubeApp/FreeTube/actions/artifacts"
-) as res_artifacts:
-    artifacts = loads(res_artifacts.read().decode("utf-8"))["artifacts"]
+ARTIFACTS_URL = "https://api.github.com/repos/FreeTubeApp/FreeTube/actions/artifacts"
+try:
+    with opener.open(ARTIFACTS_URL) as res_artifacts:
+        artifacts = loads(res_artifacts.read().decode("utf-8"))["artifacts"]
+except HTTPError as e:
+    print(f"'{e.url}' returned HTTP {e.status} {e.reason}")
+
 
 artifact_id = ""
 for artifact in artifacts:
@@ -52,12 +55,12 @@ for artifact in artifacts:
 
 zip_url = ""
 try:
-    res_zip = opener.open(
-        f"https://api.github.com/repos/FreeTubeApp/FreeTube/actions/artifacts/{artifact_id}/zip"
-    )
+    res_zip = opener.open(f"{ARTIFACTS_URL}/{artifact_id}/zip")
 except HTTPError as e:
     if e.status == 302:
         zip_url = e.headers.get("Location", "")
+    else:
+        print(f"'{e.url}' returned HTTP {e.status} {e.reason}")
 
 opener.addheaders = [("Accept", "application/octet-stream")]
 with opener.open(zip_url) as zip_res, open("artifact.zip", "wb") as f:
