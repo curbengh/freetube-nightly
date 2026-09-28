@@ -38,16 +38,18 @@ except HTTPError as e:
 
 artifact_id = ""
 for artifact in artifacts:
+    # nightly build: freetube-0.25.3-nightly-7822-amd64.pacman
+    # release build: freetube-0.25.2-amd64.pacman
     if artifact["name"].endswith(".pacman"):
         artifact_id = artifact["id"]
         name = artifact["name"]
         head_sha = artifact["workflow_run"]["head_sha"]
         workflow_id = artifact["workflow_run"]["id"]
-        # 5718
-        build = name.split("-")[3]
-        # 0.23.2
+        # 7796
+        build = f".build{name.split('-')[3]}" if len(name.split("-")) >= 4 else ""
+        # 0.25.3
         tag = name.split("-")[1]
-        release_tag = f"{tag}.build{build}.{head_sha[:7]}"
+        release_tag = f"{tag}{build}.{head_sha[:7]}"
         with open("setenv.txt", "w") as setenv:
             setenv.write(f"release_tag={release_tag}\nworkflow_id={workflow_id}\n")
         break
