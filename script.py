@@ -47,7 +47,7 @@ for artifact in artifacts:
         name = artifact["name"]
         head_sha = artifact["workflow_run"]["head_sha"]
         workflow_id = artifact["workflow_run"]["id"]
-        # 7796
+        # 7822
         build = f".build{name.split('-')[3]}" if len(name.split("-")) >= 4 else ""
         # 0.25.3
         tag = name.split("-")[1]
