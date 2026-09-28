@@ -1,6 +1,7 @@
 from json import loads
 from os import environ
 from platform import python_version
+from sys import exit as sys_exit
 from urllib.request import (
     HTTPError,
     HTTPRedirectHandler,
@@ -34,6 +35,7 @@ try:
         artifacts = loads(res_artifacts.read().decode("utf-8"))["artifacts"]
 except HTTPError as e:
     print(f"'{e.url}' returned HTTP {e.status} {e.reason}")
+    sys_exit()
 
 
 artifact_id = ""
