@@ -1,6 +1,6 @@
 from json import loads
 from os import environ
-from platform import python_version
+from sys import version_info
 from urllib.request import (
     HTTPError,
     HTTPRedirectHandler,
@@ -18,7 +18,7 @@ opener = build_opener(NoRedirect())
 opener.addheaders = [
     (
         "User-Agent",
-        f"Python-urllib/{python_version()} {environ.get('GITHUB_REPOSITORY', '')}",
+        f"Python-urllib/{version_info.major!s}.{version_info.minor!s} {environ.get('GITHUB_REPOSITORY', '')}",
     ),
     ("Accept", "application/vnd.github+json"),
     (
