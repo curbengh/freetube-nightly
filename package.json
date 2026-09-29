@@ -5,7 +5,7 @@
     "download": "node script.js"
   },
   "dependencies": {
-    "@octokit/request": "^8.1.1"
+    "@octokit/request": "^10.0.16"
   },
   "type": "module"
 }
