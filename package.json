@@ -5,8 +5,7 @@
     "download": "node script.js"
   },
   "dependencies": {
-    "@octokit/request": "^8.1.1",
-    "unzipper": "^0.10.14"
+    "@octokit/request": "^8.1.1"
   },
   "type": "module"
 }

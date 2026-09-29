@@ -12,12 +12,24 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
+      - name: Cache NPM dependencies
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-npm-cache
+          restore-keys: |
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies
+        run: npm install
       - name: Download build from upstream
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python script.py
+          npm run download
           cat setenv.txt >> $GITHUB_ENV
+      - name: Extract build to freetube.pacman.tar.xz
+        run: |
+          unzip -p "artifact.zip" > "freetube.pacman.tar.xz"
       - name: Generate hashsums
         run: sha256sum "freetube.pacman.tar.xz" > "freetube.pacman.tar.xz.sha256sum"
       - uses: ncipollo/release-action@v1

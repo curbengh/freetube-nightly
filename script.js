@@ -2,7 +2,6 @@ import { Readable } from 'node:stream'
 import { request } from '@octokit/request'
 import { createWriteStream } from 'node:fs'
 import { pipeline } from 'stream/promises'
-import { ParseOne as unzipOne } from 'unzipper'
 import { writeFile } from 'node:fs/promises'
 const { env } = process
 
@@ -39,6 +38,5 @@ const dl = await requestWithAuth('GET /repos/{owner}/{repo}/actions/artifacts/{a
 
 await pipeline(
   Readable.fromWeb((await fetch(dl.url)).body),
-  unzipOne(),
-  createWriteStream('freetube.pacman.tar.xz')
+  createWriteStream('artifact.zip')
 )
