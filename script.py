@@ -1,6 +1,5 @@
 from json import loads
 from os import environ
-from platform import python_version
 from sys import exit as sys_exit
 from urllib.request import (
     HTTPError,
@@ -19,7 +18,7 @@ opener = build_opener(NoRedirect())
 opener.addheaders = [
     (
         "User-Agent",
-        f"Python-urllib/{python_version()} {environ.get('GITHUB_REPOSITORY', '')}",
+        environ.get("GITHUB_REPOSITORY", "freetube-nightly"),
     ),
     ("Accept", "application/vnd.github+json"),
     (
