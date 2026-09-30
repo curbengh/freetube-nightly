@@ -13,10 +13,26 @@ const requestWithAuth = request.defaults({
   repo: 'FreeTube'
 })
 
-let artifactId = ''
-const res = await requestWithAuth('GET /repos/{owner}/{repo}/actions/artifacts')
+const workflowRuns = await requestWithAuth('GET /repos/{owner}/{repo}/actions/runs', {
+  branch: 'development',
+  status: 'success',
+  per_page: 20
+})
 
-for (const artifact of res.data.artifacts) {
+let runId = ''
+for (const run of workflowRuns.data.workflow_runs) {
+  if (run.name === 'Build') {
+    runId = run.id
+    break
+  }
+}
+
+const artifacts = await requestWithAuth('GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts', {
+  run_id: runId,
+})
+
+let artifactId = ''
+for (const artifact of artifacts.data.artifacts) {
   // nightly build: freetube-0.25.3-nightly-7822-amd64.pacman
   // release build: freetube-0.25.2-amd64.pacman
   if (artifact.name.endsWith('.pacman')) {
