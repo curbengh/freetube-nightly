@@ -1,14 +1,14 @@
 import { Readable } from 'node:stream'
-import { request } from '@octokit/request'
+import { Octokit } from '@octokit/core'
+import { retry } from "@octokit/plugin-retry"
 import { createWriteStream } from 'node:fs'
 import { pipeline } from 'stream/promises'
 import { writeFile } from 'node:fs/promises'
 const { env } = process
 
+const MyOctokit = Octokit.plugin(retry)
+const { request } = new MyOctokit({ auth: `${env.github_token}` })
 const requestWithAuth = request.defaults({
-  headers: {
-    authorization: `token ${env.github_token}`
-  },
   owner: 'FreeTubeApp',
   repo: 'FreeTube'
 })
@@ -27,9 +27,19 @@ for (const run of workflowRuns.data.workflow_runs) {
   }
 }
 
+if (runId === "") {
+  console.error('"Build" run not found.')
+  process.exit(1)
+}
+
 const artifacts = await requestWithAuth('GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts', {
   run_id: runId,
 })
+
+if (artifacts.data.total_count === 0) {
+  console.error(`"https://api.github.com/repos/FreeTubeApp/FreeTube/actions/runs/${runId}/artifacts" returned no artifacts.`)
+  process.exit(1)
+}
 
 let artifactId = ''
 for (const artifact of artifacts.data.artifacts) {
@@ -48,6 +58,11 @@ for (const artifact of artifacts.data.artifacts) {
     await writeFile('setenv.txt', `release_tag=${releaseTag}\nworkflow_id=${workflowId}\n`)
     break
   }
+}
+
+if (artifactId === "") {
+  console.error(`"https://api.github.com/repos/FreeTubeApp/FreeTube/actions/runs/${runId}/artifacts" returned no pacman artifact.`)
+  process.exit(1)
 }
 
 const dl = await requestWithAuth('GET /repos/{owner}/{repo}/actions/artifacts/{artifactId}/zip', { artifactId })
